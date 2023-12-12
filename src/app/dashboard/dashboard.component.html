@@ -1,0 +1,232 @@
+<app-delete-acno  [deleteAcno]="acno" (onCancel)="cancelDeleteConfirm()" (onDelete)="deletefromParent()"></app-delete-acno>
+
+<div class="text-center" *ngIf="deleteSuccesMsg">
+  <h1 class="text--center text-success">{{deleteSuccesMsg}}</h1>
+</div>
+
+
+ <div *ngIf="!deleteConfirmStatus">
+<!-- navbar  and dropdown--> 
+<nav class="navbar navbar-expand-lg bg-primary">
+  <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+          <i class="fa-solid fa-building-columns fa-2xl"></i>
+        <span> COCHIN BANK</span>
+        </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto ms-5 ps-5">
+ 
+        <li class="nav-item dropdown me-3">
+          <a class="nav-link dropdown-toggle me-5 pe-5" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Services
+          </a>
+          <ul class="dropdown-menu me-5 pe-4">
+            <li><a (click)=" getBalance()" class="dropdown-item"data-bs-toggle="offcanvas" href="#offcanvasExample" >Balance Enquiry</a></li>
+            <li><a href="" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#staticBackdrop">Fund Transfer</a></li>
+            <li><a routerLink="/transaction" class="dropdown-item" >Transaction History</a></li>
+            <li><a  (click)="deleteAccount()" class="dropdown-item" >Remove Account</a></li>
+            <li><a href="" (click)="logout()" class="dropdown-item" >Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">FUND TRANSFER</h1>
+        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+      </div>
+      <form  [formGroup]="transferForm">
+      <div class="modal-body">
+       <!-- form -->
+  
+       <div class="form-floating mb-3">
+        <input name="creditAcountNumber" formControlName="creditAcountNumber"  type="text" class="form-control" id="floatingInput12" placeholder="Credit Account Number">
+        <label for="floatingInput">Credit Account Number</label>
+
+        <div *ngIf="this.transferForm.get('creditAcountNumber')?.errors && this.transferForm.get('creditAcountNumber')?.touched " class="text-danger">*Invalid Account Number</div>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input name="amount" formControlName="amount"  type="text" class="form-control" id="floatingInput21" placeholder="Amount">
+        <label for="floatingInput">Amount</label>
+        <div *ngIf="this.transferForm.get('amount')?.errors && this.transferForm.get('amount')?.touched " class="text-danger">*Invalid Amount</div>
+      </div>
+
+      <div class="form-floating">
+        <input name=" transferPassword" formControlName="transferPassword" type="password" class="form-control" id="floatingPassword2" placeholder="Password">
+        <label for="floatingPassword">Password</label>
+        <div *ngIf="this.transferForm.get('transferPassword')?.errors && this.transferForm.get('transferPassword')?.touched " class="text-danger">*Invalid Password</div>
+
+      </div>
+    
+      </div>
+
+      <div class="text-success fw-bolder text-center mx-2 my-2">
+       <!-- result -->
+       {{transferSuccess}}
+
+
+      </div>
+      <div class="text-danger fw-bolder text-center mx-2 my-2">
+        <!-- result -->
+        {{transferError}}
+
+
+       </div>
+      <div class="my-2 m-5 text-center" >
+    
+           <button (click)="resetButton()"  type="submit" class="btn btn-outline-success text-start mx-2">Reset</button>
+
+          <button (click)="transfer()"  type="submit" class="btn btn-outline-primary text-center mx-2">Transfer</button>
+       
+          <button   type="submit" class="btn btn-outline-danger text-center mx-2" data-bs-dismiss="modal" aria-label="Close">Close</button>
+
+        
+        
+      </div>
+
+    
+
+    
+    </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- offcanvas -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+<div class="offcanvas-header">
+  <h5 class="offcanvas-title" id="offcanvasExampleLabel">Balance Enquiry</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+</div>
+<div class="offcanvas-body">
+  <img src="https://www.icegif.com/wp-content/uploads/money-icegif-14.gif" width="100%" height="300px" alt="">
+  <div>
+
+  <h5>Hello {{user}}</h5>
+  <h6>The Current Balance amount is:  <span class="text-success fa-xl">{{balance}}</span></h6>
+  </div>
+  <!-- <div class="dropdown mt-3">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+      Dropdown button
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#">Action</a></li>
+      <li><a class="dropdown-item" href="#">Another action</a></li>
+      <li><a class="dropdown-item" href="#">Something else here</a></li>
+    </ul>
+  </div> -->
+</div>
+</div>
+
+
+<!-- main content -->
+
+<div class="container">
+  <div class="row">
+      <div class="col-1"></div>
+      <div class="col-5 mt-3">
+          <!-- image -->
+<img src="https://cdn.dribbble.com/users/2243452/screenshots/6339193/qcash.gif" width="400px" height="400px" alt="">
+          
+      </div>
+      <div class="col-6 mt-4">
+          <!-- heading and text -->
+<h1>Welcome {{user}}</h1>
+<p style="text-align: justify;">Online banking allows you to conduct financial transactions via the Internet Online banking is also known as Internet banking or web banking.</p>
+<div class="collapse" id="collapseExample">
+  <div>
+      Online banking offers customers almost every service traditionally available through a local branch including deposits, transfers, and online bill payments. Virtually every banking institution has some form of online banking you can access through a computer or app.
+  </div>
+
+</div>
+<button  (click)="collapse()"  data-bs-toggle="collapse" data-bs-target="#collapseExample" class="btn btn-primary my-2">Read
+<span *ngIf="!isCollapse">More</span>
+<span *ngIf="isCollapse">Less</span>
+</button>
+      </div>
+  </div>
+</div>
+
+<!-- footer -->
+<footer class="text-center text-white" style="background-color: #f1f1f1;">
+  <!-- Grid container -->
+  <div class="container pt-4">
+    <!-- Section: Social media -->
+    <section class="mb-4">
+      <!-- Facebook -->
+      <a
+        class="btn btn-link btn-floating btn-lg text-dark m-1"
+        href="#!"
+        role="button"
+        data-mdb-ripple-color="dark"
+        ><i class="fab fa-facebook-f"></i
+      ></a>
+
+      <!-- Twitter -->
+      <a
+        class="btn btn-link btn-floating btn-lg text-dark m-1"
+        href="#!"
+        role="button"
+        data-mdb-ripple-color="dark"
+        ><i class="fab fa-twitter"></i
+      ></a>
+
+      <!-- Google -->
+      <a
+        class="btn btn-link btn-floating btn-lg text-dark m-1"
+        href="#!"
+        role="button"
+        data-mdb-ripple-color="dark"
+        ><i class="fab fa-google"></i
+      ></a>
+
+      <!-- Instagram -->
+      <a
+        class="btn btn-link btn-floating btn-lg text-dark m-1"
+        href="#!"
+        role="button"
+        data-mdb-ripple-color="dark"
+        ><i class="fab fa-instagram"></i
+      ></a>
+
+      <!-- Linkedin -->
+      <a
+        class="btn btn-link btn-floating btn-lg text-dark m-1"
+        href="#!"
+        role="button"
+        data-mdb-ripple-color="dark"
+        ><i class="fab fa-linkedin"></i
+      ></a>
+      <!-- Github -->
+      <a
+        class="btn btn-link btn-floating btn-lg text-dark m-1"
+        href="#!"
+        role="button"
+        data-mdb-ripple-color="dark"
+        ><i class="fab fa-github"></i
+      ></a>
+    </section>
+    <!-- Section: Social media -->
+  </div>
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+  <div class="text-center text-dark bg-primary p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    © 2020 Copyright:
+    <a class="text-dark" href="https://mdbootstrap.com/">CochinBank.com</a>
+  </div>
+  <!-- Copyright -->
+</footer>
+</div>
